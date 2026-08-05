@@ -1,4 +1,32 @@
-name: Build RMK firmware
+name: Build RP2350 Firmware
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv8m.main-none-eabihf # Target architecture for RP2350 (ARM Cortex-M33)
+
+      - name: Build Firmware Release
+        run: cargo build --release --target thumbv8m.main-none-eabihf
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rp2350-firmware
+          path: target/thumbv8m.main-none-eabihf/release/*.uf2name: Build RMK firmware
 on:
   workflow_dispatch:
   push:
